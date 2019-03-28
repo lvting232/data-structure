@@ -11,6 +11,7 @@ import { createTreeForGeneralized, TreeNode, createTreeForCompleteTree, inOrderT
 
 const demoTree = createTreeForGeneralized('A(B(D(E,F)),C)');
 const demoTree2 = createTreeForCompleteTree('ABCDE@FG');
+const demoT = createTreeForCompleteTree('ABE@CFGD@@@H@@');
 const demoTreeThread = createTreeForCompleteTree('ABCDE@FG');
 inOrderThread(demoTreeThread);
 
@@ -199,19 +200,99 @@ function demo5_6() {
  * 复杂度 O(h); h为二叉树高度
  */
 function demo5_x() {
-  const demoT = createTreeForCompleteTree('ABE@CFGD@@@H@@');
   inOrderThread(demoT);
   function inorderNext(node:TreeNode) {
     if (node.rtag === 1) return node.rchild;
     else {
       node = node.rchild;
-      while (node.ltag === 1) {
+      while (node && node.ltag === 1) {
         node = node.lchild;
       }
       return node;
     }
   }
-  let node = inorderNext(demoT.lchild);
-  console.log(node);
+  return inorderNext;
 }
-demo5_x();
+
+/**
+ * 线索二叉树的遍历
+ * 沿左指针往下查找，直到左线索标志为1的结点位置，该节点的左指针域必定为null(空)，他就是整个中序序列的第一个结点
+ * 访问该节点，就可以依次找到结点的后续，直到中序后续为空为止
+ * @TODO: !!!线索二叉树没怎么能理解，感觉这两个例子都是错的!!!
+ */
+function demo5_x1() {
+  const inorderNext = demo5_x();
+  function tinorderThrTree(tNode: TreeNode) {
+    if (tNode !== null) {
+      let xNode = tNode;
+      while (xNode && xNode.ltag === 0) {
+        xNode = xNode.lchild;
+        do {
+          console.log(xNode.data);
+          xNode = inorderNext(xNode)
+        } while (xNode !== null)
+      }
+    }
+  }
+  tinorderThrTree(demoT);
+}
+
+/**
+ * 树的存储结构通常分为三种
+ * 1. 双亲表示法
+ * 一组连续空间用来存储树的结点，同时为每个结点附设一个指向双亲的指针 parent
+ * 这种结构用来求parent 或者 root最便捷，但是如果用来求结点的孩子可能需要遍历整个结构
+ * index data  parent
+ *  0     A     -1
+ *  1     B      0
+ *  2     C      0
+ *  3     D      0
+ *  4     E      1
+ */
+class PTreeNode {
+  data: any;
+  parent: number;
+}
+class PTree {
+  node: [];
+  n: number;
+  maxTreeSize: 100;
+}
+
+/**
+ * 2. 孩子链表法
+ * 树的每个结点都可能有多个子树，因此可以把每个结点的孩子结点看成一个线性表
+ * n个结点就有n个孩子链表，为了便于查找，可将树中各结点的孩子链表的头结点存放在一个指针数组中
+ */
+class CTreeNode {
+  child: number;
+  data: any;
+}
+class CPTreeNode {
+  data: any;
+  firstChild: CTreeNode;
+}
+class CTree {
+  nodes: CPTreeNode[];
+  maxTreeSize: 100;
+  n: number; // 结点数
+  r: number; // 下标
+}
+
+/**
+ * ps: 
+ * 孩子链表方便找出某个节点的所有child
+ * 双亲表示法方便找出某个结点的parent && parents
+ * 所以有另一种就是结合孩子链表法与双亲表示法，这样既方便往下查找又方便向上查找，但是有一个缺点就是每个node都会多两个存储空间
+ */
+
+ /**
+  * 3. 孩子兄弟表示法(react-16的fiber就是用这种链表法) 又称二叉链表示法，既以二叉链表作为树的存储结构
+  * 链表中两个指针域分别指向该结点的第一个孩子结点和下一个兄弟结点
+  * 命名为firshChild与nextSibling
+  */
+
+
+/**
+ * 树与森林与二叉树的转换
+ */
