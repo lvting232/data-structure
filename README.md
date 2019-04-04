@@ -12,11 +12,18 @@ array_generalizedTable
 # 第五章 树与二叉树
 tree
 
+# 第六章 图
+graph
+
+# 第七章 排序
+sort
+
 ```
 ├─array_generalizedTable 多维数组与广义表
 ├─list 线性表
 ├─stack_queue 栈与队列
 ├─tree 树与二叉树
 ├─graph 图
+├─sort 排序
 └─typescript 学习ts的目录
 ```
